@@ -1,17 +1,8 @@
-
 import React, { useEffect, useState, Suspense } from 'react';
 import { useAuth } from '../context/AuthContext';
 
-
-const loadComponent = (scope, module) => {
-  return async () => {
-    
-    await __webpack_init_sharing__('default');
-    const container = window[scope]; // MFE ka container dhoondho
-    await container.init(__webpack_share_scopes__.default);
-    const factory = await window[scope].get(module);
-    return factory();
-  };
+const componentRegistry = {
+  'support-tickets': React.lazy(() => import('supportTicketsApp/SupportTickets')),
 };
 
 const Dashboard = () => {
@@ -25,16 +16,13 @@ const Dashboard = () => {
             const response = await fetch(`${API_URL}/api/me/screens`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-            const data = await response.json();
-            setScreens(data);
-        };
-        if (token) fetchScreens();
-    }, [token]);
-
-    const handleScreenSelect = (screen) => {
-
-      const LazyComponent = React.lazy(loadComponent(screen.scope, screen.module));
-      setSelectedComponent(() => LazyComponent);
+            const data = 
+      const LazyCompone = componentRegistry[screen.id];
+      if (LazyComponent) {
+        setSelectedComponent(() => LazyComponent);
+      } else {
+        setSelectedComponent(() => () => <div>Component '{screen.name}' not found.</div>);
+      }
     };
 
     return (
@@ -70,7 +58,7 @@ const Dashboard = () => {
                     <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
                 </header>
                 <main className="flex-1 p-6">
-                    <Suspense fallback={<div>Loading component...</div>}>
+                    <Suspense fallback={<div className="text-gray-500">Loading component...</div>}>
                         {SelectedComponent ? <SelectedComponent /> : <div className="text-gray-500">Select a screen from the sidebar to begin.</div>}
                     </Suspense>
                 </main>
