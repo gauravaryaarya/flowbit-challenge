@@ -1,4 +1,5 @@
 services:
+  # Node.js/Express Backend API
   api:
     build:
       context: ./packages/api
@@ -11,9 +12,11 @@ services:
     volumes:
       - ./packages/api:/app
       - /app/node_modules
+      - ./registry.json:/app/registry.json
     depends_on:
       - mongo
 
+  # React Shell UI (Port 3000)
   shell-ui:
     build:
       context: ./packages/shell-ui
@@ -26,6 +29,20 @@ services:
       - ./packages/shell-ui:/app
       - /app/node_modules
 
+  # Support Tickets MFE (Port 3001)
+  support-tickets-mfe:
+    build:
+      context: ./packages/support-tickets-mfe
+      dockerfile: Dockerfile
+    container_name: flowbit-mfe-support
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./packages/support-tickets-mfe:/app
+      - /app/node_modules
+
+  # MongoDB Database Service
   mongo:
     image: mongo:latest
     container_name: flowbit-mongo

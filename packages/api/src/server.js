@@ -8,7 +8,14 @@ const { protect } = require('./middleware/auth.middleware');
 const app = express();
 const PORT = process.env.API_PORT || 5001;
 
-app.use(cors());
+// --- CORS Configuration ---
+const corsOptions = {
+  origin: 'http://localhost:3000', 
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', 
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 if (process.env.NODE_ENV !== 'test') {
