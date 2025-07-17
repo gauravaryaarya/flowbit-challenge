@@ -1,0 +1,40 @@
+services:
+  api:
+    build:
+      context: ./packages/api
+      dockerfile: Dockerfile
+    container_name: flowbit-api
+    restart: unless-stopped
+    env_file: ./.env
+    ports:
+      - "${API_PORT}:${API_PORT}"
+    volumes:
+      - ./packages/api:/app
+      - /app/node_modules
+    depends_on:
+      - mongo
+
+  shell-ui:
+    build:
+      context: ./packages/shell-ui
+      dockerfile: Dockerfile
+    container_name: flowbit-shell-ui
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./packages/shell-ui:/app
+      - /app/node_modules
+
+  mongo:
+    image: mongo:latest
+    container_name: flowbit-mongo
+    restart: unless-stopped
+    env_file: ./.env
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

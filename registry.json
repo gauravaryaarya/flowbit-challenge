@@ -1,0 +1,26 @@
+[
+  {
+    "customerName": "LogisticsCo",
+    "screens": [
+      {
+        "id": "support-tickets",
+        "name": "Support Tickets",
+        "url": "http://localhost:3001/remoteEntry.js",
+        "scope": "supportTicketsApp",
+        "module": "./SupportTickets"
+      }
+    ]
+  },
+  {
+    "customerName": "RetailGmbH",
+    "screens": [
+      {
+        "id": "support-tickets",
+        "name": "Support Tickets",
+        "url": "http://localhost:3001/remoteEntry.js",
+        "scope": "supportTicketsApp",
+        "module": "./SupportTickets"
+      }
+    ]
+  }
+]
