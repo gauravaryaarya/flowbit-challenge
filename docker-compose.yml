@@ -1,5 +1,4 @@
 services:
-  # Node.js/Express Backend API
   api:
     build:
       context: ./packages/api
@@ -16,7 +15,6 @@ services:
     depends_on:
       - mongo
 
-  # React Shell UI (Port 3000)
   shell-ui:
     build:
       context: ./packages/shell-ui
@@ -29,7 +27,6 @@ services:
       - ./packages/shell-ui:/app
       - /app/node_modules
 
-  # Support Tickets MFE (Port 3001)
   support-tickets-mfe:
     build:
       context: ./packages/support-tickets-mfe
@@ -42,7 +39,19 @@ services:
       - ./packages/support-tickets-mfe:/app
       - /app/node_modules
 
-  # MongoDB Database Service
+  # N8N SERVICE
+  n8n:
+    image: n8nio/n8n
+    container_name: flowbit-n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    env_file: ./.env
+    volumes:
+      - ./n8n-data:/home/node/.n8n
+    depends_on:
+      - api
+
   mongo:
     image: mongo:latest
     container_name: flowbit-mongo
@@ -55,3 +64,4 @@ services:
 
 volumes:
   mongo-data:
+  n8n-data:

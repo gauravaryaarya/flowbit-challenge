@@ -1,6 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { ModuleFederationPlugin } = require('webpack').container;
 const path = require('path');
+const deps = require('./package.json').dependencies; // Dependencies ko automatically read karein
 
 module.exports = {
   entry: './src/index',
@@ -33,6 +34,18 @@ module.exports = {
       name: 'shellUI',
       remotes: {
         supportTicketsApp: 'supportTicketsApp@http://localhost:3001/remoteEntry.js',
+      },
+      
+      shared: {
+        ...deps,
+        react: {
+          singleton: true,
+          requiredVersion: deps.react,
+        },
+        'react-dom': {
+          singleton: true,
+          requiredVersion: deps['react-dom'],
+        },
       },
     }),
     new HtmlWebpackPlugin({

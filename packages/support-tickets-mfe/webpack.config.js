@@ -1,6 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { ModuleFederationPlugin } = require('webpack').container;
 const path = require('path');
+const deps = require('./package.json').dependencies;
 
 module.exports = {
   entry: './src/index',
@@ -9,7 +10,7 @@ module.exports = {
     static: {
       directory: path.join(__dirname, 'public'),
     },
-    port: 3001, // Yeh ek alag port (3001) par chalega
+    port: 3001,
   },
   output: {
     publicPath: 'auto',
@@ -21,16 +22,29 @@ module.exports = {
         loader: 'babel-loader',
         exclude: /node_modules/,
       },
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader", "postcss-loader"],
+      },
     ],
   },
   plugins: [
-    // Yeh plugin is app ko ek micro-frontend banata hai
     new ModuleFederationPlugin({
-      name: 'supportTicketsApp', // Iska naam wahi hai jo registry.json mein hai
-      filename: 'remoteEntry.js', // Yeh file Shell UI use karega
+      name: 'supportTicketsApp',
+      filename: 'remoteEntry.js',
       exposes: {
-        // Hum App component ko expose kar rahe hain
         './SupportTickets': './src/App',
+      },
+      shared: {
+        ...deps,
+        react: {
+          singleton: true,
+          requiredVersion: deps.react,
+        },
+        'react-dom': {
+          singleton: true,
+          requiredVersion: deps['react-dom'],
+        },
       },
     }),
     new HtmlWebpackPlugin({

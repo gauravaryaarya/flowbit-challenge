@@ -1,8 +1,12 @@
 import React, { useEffect, useState, Suspense } from 'react';
 import { useAuth } from '../context/AuthContext';
 
+
+const SupportTicketsComponent = React.lazy(() => import('supportTicketsApp/SupportTickets'));
+
+
 const componentRegistry = {
-  'support-tickets': React.lazy(() => import('supportTicketsApp/SupportTickets')),
+  'support-tickets': SupportTicketsComponent
 };
 
 const Dashboard = () => {
@@ -12,14 +16,29 @@ const Dashboard = () => {
 
     useEffect(() => {
         const fetchScreens = async () => {
-            const API_URL = 'http://localhost:5001';
-            const response = await fetch(`${API_URL}/api/me/screens`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            const data = 
-      const LazyCompone = componentRegistry[screen.id];
-      if (LazyComponent) {
-        setSelectedComponent(() => LazyComponent);
+            try {
+                const API_URL = 'http://localhost:5001';
+                const response = await fetch(`${API_URL}/api/me/screens`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                setScreens(data);
+            } catch (error) {
+                console.error("Failed to fetch screens:", error);
+            }
+        };
+        if (token) {
+            fetchScreens();
+        }
+    }, [token]);
+
+    const handleScreenSelect = (screen) => {
+      const ComponentToLoad = componentRegistry[screen.id];
+      if (ComponentToLoad) {
+        setSelectedComponent(() => ComponentToLoad);
       } else {
         setSelectedComponent(() => () => <div>Component '{screen.name}' not found.</div>);
       }

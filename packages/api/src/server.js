@@ -8,10 +8,9 @@ const { protect } = require('./middleware/auth.middleware');
 const app = express();
 const PORT = process.env.API_PORT || 5001;
 
-// --- CORS Configuration ---
 const corsOptions = {
-  origin: 'http://localhost:3000', 
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', 
+  origin: 'http://localhost:3000',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
@@ -29,10 +28,14 @@ if (process.env.NODE_ENV !== 'test') {
 
 const authRoutes = require('./routes/auth.routes');
 const meRoutes = require('./routes/me.routes');
+const ticketsRoutes = require('./routes/tickets.routes'); // Naya route import
+const webhookRoutes = require('./routes/webhook.routes'); // Naya route import
 
 app.get('/', (req, res) => res.status(200).json({ message: 'API is running!' }));
 app.use('/api/auth', authRoutes);
 app.use('/api/me', protect, meRoutes);
+app.use('/api/tickets', protect, ticketsRoutes); // Naya route add
+app.use('/webhook', webhookRoutes); // Naya route add
 
 if (process.env.NODE_ENV !== 'test') {
     app.listen(PORT, () => {

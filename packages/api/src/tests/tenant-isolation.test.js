@@ -4,13 +4,6 @@ const app = require('../server');
 const User = require('../models/user.model');
 const Customer = require('../models/customer.model');
 
-jest.mock('../models/ticket.model', () => {
-    const ticketSchema = new mongoose.Schema({
-        title: String,
-        customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer', required: true },
-    });
-    return mongoose.model('Ticket', ticketSchema);
-});
 const Ticket = require('../models/ticket.model');
 
 describe('Tenant Data Isolation', () => {
